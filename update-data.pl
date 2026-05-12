@@ -68,6 +68,7 @@ my %carrier_map = (
     decode('utf8', '邮政快递') => decode('utf8', '邮政电商标快'),
     decode('utf8', '邮政标快') => decode('utf8', '邮政电商标快'),
     decode('utf8', '邮政电商标快') => decode('utf8', '邮政电商标快'),
+    decode('utf8', 'EMS')      => decode('utf8', '邮政电商标快'),
     decode('utf8', '顺丰')     => decode('utf8', '顺丰速运'),
     decode('utf8', '顺丰速运') => decode('utf8', '顺丰速运'),
     decode('utf8', '顺丰快递') => decode('utf8', '顺丰速运'),
@@ -107,7 +108,7 @@ for my $line (@lines) {
     my $metric_type = $cols[0];
     my $carrier_name = $cols[1];
     my $daily_avg = $cols[2];
-    $daily_avg =~ s/[^\d\-]//g;
+    $daily_avg =~ s/[^\d\.\-]//g;
     $daily_avg = 0 if !$daily_avg || $daily_avg eq '-';
     
     # Map carrier name
