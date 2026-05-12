@@ -426,7 +426,7 @@
                   "4" : 3618,
                   "5" : 3468
                },
-               "tMinus1Volume" : 0
+               "tMinus1Volume" : 2905
             }
          },
          "savingsActual" : 58.6,
@@ -434,7 +434,7 @@
          "tMinus1Volume" : 95000
       }
    ],
-   "lastUpdated" : "2026-05-12T11:47:18+00:00",
+   "lastUpdated" : "2026-05-12T12:06:53+00:00",
    "projectCarriers" : {
       "商家寄件" : [
          "中通快递",
