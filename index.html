@@ -138,6 +138,7 @@
                 <th>中标单量</th>
                 <th>下单进度</th>
                 <th>FY26日均</th>
+                <th>T-1单量</th>
                 <th>1月</th>
                 <th>2月</th>
                 <th>3月</th>
@@ -441,6 +442,8 @@
         const savingsProgress = c.savingsTarget > 0 ? Math.min(100, (c.savingsActual / c.savingsTarget * 100)).toFixed(1) : 0;
         // FY26日均列
         const fy26Cell = c.fy26DailyAvg ? `<td style="text-align:right;font-weight:600;color:#60a5fa;">${c.fy26DailyAvg.toLocaleString()}</td>` : '<td style="text-align:right;color:#475569;">-</td>';
+        // T-1单量列
+        const t1Cell = c.tMinus1Volume ? `<td style="text-align:right;font-weight:600;color:#a78bfa;">${c.tMinus1Volume.toLocaleString()}</td>` : '<td style="text-align:right;color:#475569;">-</td>';
         // 月度单量列
         const monthlyCells = [];
         for (let m = 1; m <= 12; m++) {
@@ -471,6 +474,7 @@
                 <span style="font-size:11px;color:#64748b;min-width:36px;">${progress}%</span>
               </div>`}</td>
             ${fy26Cell}
+            ${isNoCost ? '<td style="text-align:right;color:#475569;">-</td>' : t1Cell}
             ${monthlyCells.join('')}
           </tr>
         `;
@@ -649,6 +653,7 @@
             savingsActual: Math.round((30 + Math.random() * 150) * 100) / 100,
             bidVolume: Math.round((10 + Math.random() * 90) * 100) / 100,
             fy26DailyAvg,
+            tMinus1Volume: fy26DailyAvg + Math.floor(Math.random() * 40000 - 20000),
             monthlyDailyAvg
           };
         }),
