@@ -15,7 +15,7 @@
          "name" : "中通快递",
          "ordered" : 1420.8,
          "projectData" : {
-            "åå®¶å¯ä»¶" : {
+            "商家寄件" : {
                "fy26DailyAvg" : 18135,
                "monthlyDailyAvg" : {
                   "1" : 24413,
@@ -26,7 +26,7 @@
                },
                "tMinus1Volume" : 53986
             },
-            "éè´§ä¸é¨" : {
+            "送货上门" : {
                "fy26DailyAvg" : 154214,
                "monthlyDailyAvg" : {
                   "1" : 136640,
@@ -57,7 +57,7 @@
          "name" : "圆通速递",
          "ordered" : 1180.6,
          "projectData" : {
-            "åå®¶å¯ä»¶" : {
+            "商家寄件" : {
                "fy26DailyAvg" : 17912,
                "monthlyDailyAvg" : {
                   "1" : 27337,
@@ -68,7 +68,7 @@
                },
                "tMinus1Volume" : 60167
             },
-            "éè´§ä¸é¨" : {
+            "送货上门" : {
                "fy26DailyAvg" : 108534,
                "monthlyDailyAvg" : {
                   "1" : 101876,
@@ -99,7 +99,7 @@
          "name" : "申通快递",
          "ordered" : 480.3,
          "projectData" : {
-            "åå®¶å¯ä»¶" : {
+            "商家寄件" : {
                "fy26DailyAvg" : 18223,
                "monthlyDailyAvg" : {
                   "1" : 24739,
@@ -110,7 +110,7 @@
                },
                "tMinus1Volume" : 55167
             },
-            "éè´§ä¸é¨" : {
+            "送货上门" : {
                "fy26DailyAvg" : 106847,
                "monthlyDailyAvg" : {
                   "1" : 87765,
@@ -141,7 +141,7 @@
          "name" : "韵达快递",
          "ordered" : 650.4,
          "projectData" : {
-            "åå®¶å¯ä»¶" : {
+            "商家寄件" : {
                "fy26DailyAvg" : 22019,
                "monthlyDailyAvg" : {
                   "1" : 33545,
@@ -152,7 +152,7 @@
                },
                "tMinus1Volume" : 44910
             },
-            "éè´§ä¸é¨" : {
+            "送货上门" : {
                "fy26DailyAvg" : 53402,
                "monthlyDailyAvg" : {
                   "1" : 40970,
@@ -183,7 +183,7 @@
          "name" : "极兔速递",
          "ordered" : 620.4,
          "projectData" : {
-            "åå®¶å¯ä»¶" : {
+            "商家寄件" : {
                "fy26DailyAvg" : 13682,
                "monthlyDailyAvg" : {
                   "1" : 27863,
@@ -194,7 +194,7 @@
                },
                "tMinus1Volume" : 57360
             },
-            "éè´§ä¸é¨" : {
+            "送货上门" : {
                "fy26DailyAvg" : 9948,
                "monthlyDailyAvg" : {
                   "1" : 9113,
@@ -225,7 +225,7 @@
          "name" : "顺丰速运",
          "ordered" : 875.24,
          "projectData" : {
-            "åå®¶å¯ä»¶" : {
+            "商家寄件" : {
                "fy26DailyAvg" : 4479,
                "monthlyDailyAvg" : {
                   "1" : 7321,
@@ -236,7 +236,7 @@
                },
                "tMinus1Volume" : 18577
             },
-            "éè´§ä¸é¨" : {
+            "送货上门" : {
                "fy26DailyAvg" : 326374,
                "monthlyDailyAvg" : {
                   "1" : 252113,
@@ -267,7 +267,7 @@
          "name" : "邮政电商标快",
          "ordered" : 820.5,
          "projectData" : {
-            "åå®¶å¯ä»¶" : {
+            "商家寄件" : {
                "fy26DailyAvg" : 11,
                "monthlyDailyAvg" : {
                   "1" : 4,
@@ -298,7 +298,7 @@
          "name" : "菜鸟速递",
          "ordered" : 580.4,
          "projectData" : {
-            "åå®¶å¯ä»¶" : {
+            "商家寄件" : {
                "fy26DailyAvg" : 42,
                "monthlyDailyAvg" : {
                   "1" : 47,
@@ -309,7 +309,7 @@
                },
                "tMinus1Volume" : 0
             },
-            "éè´§ä¸é¨" : {
+            "送货上门" : {
                "fy26DailyAvg" : 8984,
                "monthlyDailyAvg" : {
                   "1" : 9010,
@@ -340,7 +340,7 @@
          "name" : "京东快递",
          "ordered" : 450.2,
          "projectData" : {
-            "åå®¶å¯ä»¶" : {
+            "商家寄件" : {
                "fy26DailyAvg" : 72000,
                "monthlyDailyAvg" : {
                   "1" : 78000,
