@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人业务看板 | 业务数据 + 行业行情</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            slate: { 850: '#1e293b', 900: '#0f172a' },
+            primary: { 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: #0f172a; color: #e2e8f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; }
+    .card-header { border-bottom: 1px solid rgba(255,255,255,0.06); padding: 16px 20px; font-weight: 600; font-size: 15px; }
+    .metric-card { padding: 20px; text-align: center; }
+    .metric-value { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+    .metric-label { font-size: 12px; color: #94a3b8; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .metric-change { font-size: 13px; margin-top: 6px; font-weight: 500; }
+    .up { color: #f87171; }
+    .down { color: #4ade80; }
+    .neutral { color: #94a3b8; }
+    .tab-btn { padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; border: none; background: transparent; color: #94a3b8; }
+    .tab-btn.active { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+    .tab-btn:hover:not(.active) { color: #e2e8f0; background: rgba(255,255,255,0.04); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; padding: 12px 16px; color: #94a3b8; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.06); white-space: nowrap; }
+    td { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .progress-bar { height: 6px; border-radius: 3px; background: rgba(255,255,255,0.06); overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+    .status-live { background: #4ade80; box-shadow: 0 0 6px rgba(74,222,128,0.4); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .refresh-btn { padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #94a3b8; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+    .refresh-btn:hover { background: rgba(255,255,255,0.08); color: #e2e8f0; }
+    .refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .news-item { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .news-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; margin-right: 8px; }
+    .tag-policy { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .tag-data { background: rgba(74,222,128,0.15); color: #4ade80; }
+    .tag-market { background: rgba(251,191,36,0.15); color: #fbbf24; }
+    .section { margin-bottom: 24px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    @media (max-width: 1200px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) { .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; } }
+    .chart-container { position: relative; height: 280px; padding: 16px; }
+    .stock-card { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .stock-name { font-weight: 500; font-size: 14px; }
+    .stock-code { font-size: 11px; color: #64748b; margin-top: 2px; }
+    .stock-price { font-size: 18px; font-weight: 700; text-align: right; }
+    .stock-change { font-size: 12px; margin-top: 2px; text-align: right; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div style="max-width: 1440px; margin: 0 auto; padding: 24px;">
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+      <div>
+        <h1 style="font-size: 22px; font-weight: 700; margin: 0;">个人业务看板</h1>
+        <p style="font-size: 13px; color: #64748b; margin-top: 4px;">业务数据 + 快递行业行情 · 实时监控</p>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 13px; color: #64748b;"><span class="status-dot status-live"></span>实时数据</span>
+        <span id="updateTime" style="font-size: 12px; color: #64748b;">--</span>
+        <button class="refresh-btn" id="refreshBtn" onclick="refreshAll()">刷新数据</button>
+      </div>
+    </div>
+
+    <!-- 模块切换 -->
+    <div style="display: flex; gap: 8px; margin-bottom: 24px; padding: 4px; background: rgba(255,255,255,0.03); border-radius: 10px; width: fit-content;">
+      <button class="tab-btn active" onclick="switchTab('business')">业务数据</button>
+      <button class="tab-btn" onclick="switchTab('market')">行业行情</button>
+    </div>
+
+    <!-- ====== 业务数据模块 ====== -->
+    <div id="businessTab">
+      <!-- 汇总指标 -->
+      <div class="grid-4 section">
+        <div class="card metric-card">
+          <div class="metric-value" style="color: #60a5fa;" id="totalBudget">--</div>
+          <div class="metric-label">总预算金额（万元）</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-value" style="color: #a78bfa;" id="totalOrdered">--</div>
+          <div class="metric-label">已下单金额（万元）</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-value" style="color: #4ade80;" id="totalSavings">--</div>
+          <div class="metric-label">已降本金额（万元）</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-value" style="color: #fbbf24;" id="totalBidVolume">--</div>
+          <div class="metric-label">中标单量（万单）</div>
+        </div>
+      </div>
+
+      <!-- 项目切换 -->
+      <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+        <button class="tab-btn active" id="projBtn0" onclick="switchProject(0)">商家寄件</button>
+        <button class="tab-btn" id="projBtn1" onclick="switchProject(1)">送货上门</button>
+        <button class="tab-btn" id="projBtn2" onclick="switchProject(2)">快递拦截</button>
+      </div>
+
+      <!-- 业务数据表格 + 图表 -->
+      <div class="grid-2 section">
+        <div class="card" style="overflow: hidden;">
+          <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="tableTitle">商家寄件 - 服务商数据</span>
+            <span style="font-size: 12px; color: #64748b;">单位：万元 / 万单</span>
+          </div>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>服务商</th>
+                  <th>预算金额</th>
+                  <th>已下单金额</th>
+                  <th>降本金额</th>
+                  <th>已降本金额</th>
+                  <th>中标单量</th>
+                  <th>下单进度</th>
+                </tr>
+              </thead>
+              <tbody id="businessTable"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">2026年各月日均单量趋势（单）</div>
+          <div class="chart-container">
+            <canvas id="monthlyChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- 预算 vs 已下单对比 -->
+      <div class="grid-2 section">
+        <div class="card">
+          <div class="card-header">预算 vs 已下单对比（万元）</div>
+          <div class="chart-container">
+            <canvas id="budgetChart"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">降本进度（万元）</div>
+          <div class="chart-container">
+            <canvas id="savingsChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== 行业行情模块 ====== -->
+    <div id="marketTab" class="hidden">
+      <!-- 行业宏观指标 -->
+      <div class="grid-4 section">
+        <div class="card metric-card">
+          <div class="metric-value" style="color: #60a5fa;" id="indVolume">--</div>
+          <div class="metric-label">上月业务量（亿件）</div>
+          <div class="metric-change" id="indVolumeChange">--</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-value" style="color: #a78bfa;" id="indYoy">--</div>
+          <div class="metric-label">同比增速（%）</div>
+          <div class="metric-change" id="indYoyChange">--</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-value" style="color: #4ade80;" id="indPrice">--</div>
+          <div class="metric-label">行业价格指数</div>
+          <div class="metric-change" id="indPriceChange">--</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-value" style="color: #fbbf24;" id="oilPrice">--</div>
+          <div class="metric-label">0号柴油（元/升）</div>
+          <div class="metric-change" id="oilChange">--</div>
+        </div>
+      </div>
+
+      <div class="grid-2 section">
+        <!-- 股票行情 -->
+        <div class="card" style="overflow: hidden;">
+          <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <span>快递上市公司股价</span>
+            <span style="font-size: 12px; color: #64748b;">实时行情</span>
+          </div>
+          <div id="stockList"></div>
+        </div>
+
+        <!-- 行业新闻 -->
+        <div class="card" style="overflow: hidden;">
+          <div class="card-header">行业动态</div>
+          <div id="newsList"></div>
+        </div>
+      </div>
+
+      <!-- 业务量趋势图 -->
+      <div class="card section">
+        <div class="card-header">快递行业业务量趋势（亿件）</div>
+        <div class="chart-container" style="height: 320px;">
+          <canvas id="industryVolumeChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============ 全局状态 ============
+    let currentProject = 0;
+    let businessData = null;
+    let marketData = null;
+    let charts = {};
+
+    const projectNames = ['商家寄件', '送货上门', '快递拦截'];
+    const carrierColors = ['#60a5fa', '#a78bfa', '#4ade80', '#fbbf24', '#f87171', '#22d3ee', '#fb923c'];
+
+    // ============ Chart.js 默认配置 ============
+    Chart.defaults.color = '#94a3b8';
+    Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+    Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, sans-serif';
+
+    // ============ 初始化 ============
+    document.addEventListener('DOMContentLoaded', () => {
+      initCharts();
+      refreshAll();
+      // 每小时自动刷新
+      setInterval(refreshAll, 3600000);
+      // 每天12:00自动刷新行情
+      scheduleDailyRefresh();
+    });
+
+    function scheduleDailyRefresh() {
+      const now = new Date();
+      const next12 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0);
+      if (next12 <= now) next12.setDate(next12.getDate() + 1);
+      const msUntil12 = next12 - now;
+      setTimeout(() => {
+        refreshMarketData();
+        setInterval(refreshMarketData, 86400000);
+      }, msUntil12);
+    }
+
+    // ============ Tab 切换 ============
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+        if (i < 2) btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      document.getElementById('businessTab').classList.toggle('hidden', tab !== 'business');
+      document.getElementById('marketTab').classList.toggle('hidden', tab !== 'market');
+      if (tab === 'market' && marketData) renderMarketData();
+    }
+
+    function switchProject(idx) {
+      currentProject = idx;
+      document.querySelectorAll('#businessTab .tab-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', i === idx);
+      });
+      renderBusinessData();
+    }
+
+    // ============ 刷新数据 ============
+    async function refreshAll() {
+      const btn = document.getElementById('refreshBtn');
+      btn.disabled = true;
+      btn.textContent = '刷新中...';
+      await Promise.all([refreshBusinessData(), refreshMarketData()]);
+      btn.disabled = false;
+      btn.textContent = '刷新数据';
+      document.getElementById('updateTime').textContent = new Date().toLocaleString('zh-CN');
+    }
+
+    async function refreshBusinessData() {
+      try {
+        const res = await fetch('/api/business');
+        const json = await res.json();
+        if (json.success) {
+          businessData = json.data;
+          renderBusinessData();
+        }
+      } catch (e) {
+        console.warn('业务数据API不可用，使用演示数据');
+        businessData = generateDemoBusinessData();
+        renderBusinessData();
+      }
+    }
+
+    async function refreshMarketData() {
+      try {
+        const res = await fetch('/api/market');
+        const json = await res.json();
+        if (json.success) {
+          marketData = json.data;
+          if (!document.getElementById('marketTab').classList.contains('hidden')) {
+            renderMarketData();
+          }
+        }
+      } catch (e) {
+        console.warn('行情API不可用，使用演示数据');
+        marketData = generateDemoMarketData();
+        if (!document.getElementById('marketTab').classList.contains('hidden')) {
+          renderMarketData();
+        }
+      }
+    }
+
+    // ============ 渲染业务数据 ============
+    function renderBusinessData() {
+      if (!businessData) return;
+      const proj = businessData.projects[currentProject];
+      const carriers = businessData.carriers || [];
+
+      // 更新汇总指标
+      let totalBudget = 0, totalOrdered = 0, totalSavings = 0, totalBid = 0;
+      businessData.projects.forEach(p => {
+        totalBudget += p.budget || 0;
+        totalOrdered += p.ordered || 0;
+        totalSavings += p.savingsActual || 0;
+        totalBid += p.bidVolume || 0;
+      });
+      document.getElementById('totalBudget').textContent = totalBudget.toFixed(2);
+      document.getElementById('totalOrdered').textContent = totalOrdered.toFixed(2);
+      document.getElementById('totalSavings').textContent = totalSavings.toFixed(2);
+      document.getElementById('totalBidVolume').textContent = totalBid.toFixed(2);
+
+      // 更新表格标题
+      document.getElementById('tableTitle').textContent = `${projectNames[currentProject]} - 服务商数据`;
+
+      // 渲染表格
+      const tbody = document.getElementById('businessTable');
+      tbody.innerHTML = carriers.map((c, i) => {
+        const progress = c.budget > 0 ? Math.min(100, (c.ordered / c.budget * 100)).toFixed(1) : 0;
+        const savingsProgress = c.savingsTarget > 0 ? Math.min(100, (c.savingsActual / c.savingsTarget * 100)).toFixed(1) : 0;
+        return `
+          <tr>
+            <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${carrierColors[i % carrierColors.length]};margin-right:8px;"></span>${c.name}</td>
+            <td>${(c.budget || 0).toFixed(2)}</td>
+            <td>${(c.ordered || 0).toFixed(2)}</td>
+            <td>${(c.savingsTarget || 0).toFixed(2)}</td>
+            <td>${(c.savingsActual || 0).toFixed(2)} <span style="font-size:11px;color:${savingsProgress >= 80 ? '#4ade80' : '#fbbf24'}">(${savingsProgress}%)</span></td>
+            <td>${(c.bidVolume || 0).toFixed(2)}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="progress-bar" style="flex:1;min-width:60px;">
+                  <div class="progress-fill" style="width:${progress}%;background:${progress >= 80 ? '#4ade80' : progress >= 50 ? '#60a5fa' : '#fbbf24'}"></div>
+                </div>
+                <span style="font-size:11px;color:#64748b;min-width:36px;">${progress}%</span>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // 更新图表
+      updateBusinessCharts(carriers);
+    }
+
+    function updateBusinessCharts(carriers) {
+      const labels = carriers.map(c => c.name);
+      const budgets = carriers.map(c => c.budget || 0);
+      const ordered = carriers.map(c => c.ordered || 0);
+      const savingsTarget = carriers.map(c => c.savingsTarget || 0);
+      const savingsActual = carriers.map(c => c.savingsActual || 0);
+
+      // 预算对比图
+      charts.budget.data.labels = labels;
+      charts.budget.data.datasets[0].data = budgets;
+      charts.budget.data.datasets[1].data = ordered;
+      charts.budget.update();
+
+      // 降本进度图
+      charts.savings.data.labels = labels;
+      charts.savings.data.datasets[0].data = savingsTarget;
+      charts.savings.data.datasets[1].data = savingsActual;
+      charts.savings.update();
+
+      // 月均单量图
+      const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+      charts.monthly.data.labels = months;
+      charts.monthly.data.datasets = carriers.map((c, i) => ({
+        label: c.name,
+        data: months.map((_, mi) => {
+          const val = c.monthlyDailyAvg?.[mi + 1];
+          return val !== null && val !== undefined ? val : null;
+        }),
+        borderColor: carrierColors[i % carrierColors.length],
+        backgroundColor: carrierColors[i % carrierColors.length] + '20',
+        tension: 0.3,
+        pointRadius: 3,
+        borderWidth: 2,
+        fill: false
+      }));
+      charts.monthly.update();
+    }
+
+    // ============ 渲染行情数据 ============
+    function renderMarketData() {
+      if (!marketData) return;
+      const { stocks, industry, oil, news } = marketData;
+
+      // 行业宏观
+      document.getElementById('indVolume').textContent = industry.latestMonthVolume?.toFixed(1) || '--';
+      document.getElementById('indVolumeChange').textContent = `环比 ${(industry.momGrowth >= 0 ? '+' : '')}${industry.momGrowth?.toFixed(1) || '--'}%`;
+      document.getElementById('indVolumeChange').className = `metric-change ${industry.momGrowth >= 0 ? 'up' : 'down'}`;
+
+      document.getElementById('indYoy').textContent = (industry.yoyGrowth >= 0 ? '+' : '') + (industry.yoyGrowth?.toFixed(1) || '--');
+      document.getElementById('indYoyChange').textContent = '同比增速';
+      document.getElementById('indYoyChange').className = `metric-change ${industry.yoyGrowth >= 0 ? 'up' : 'down'}`;
+
+      document.getElementById('indPrice').textContent = industry.avgPriceIndex?.toFixed(1) || '--';
+      document.getElementById('indPriceChange').textContent = `较上月 ${industry.priceChange >= 0 ? '+' : ''}${industry.priceChange?.toFixed(1) || '--'}%`;
+      document.getElementById('indPriceChange').className = `metric-change ${industry.priceChange >= 0 ? 'up' : 'down'}`;
+
+      document.getElementById('oilPrice').textContent = oil.dieselPrice?.toFixed(2) || '--';
+      document.getElementById('oilChange').textContent = `下次调整: ${oil.nextAdjustDate || '--'}`;
+      document.getElementById('oilChange').className = 'metric-change neutral';
+
+      // 股票列表
+      document.getElementById('stockList').innerHTML = (stocks || []).map(s => {
+        const isUp = s.change >= 0;
+        return `
+          <div class="stock-card">
+            <div>
+              <div class="stock-name">${s.name}</div>
+              <div class="stock-code">${s.code}</div>
+            </div>
+            <div>
+              <div class="stock-price" style="color: ${isUp ? '#f87171' : '#4ade80'}">${s.price?.toFixed(2) || '--'}</div>
+              <div class="stock-change" style="color: ${isUp ? '#f87171' : '#4ade80'}">${isUp ? '+' : ''}${s.change?.toFixed(2) || '--'}%</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // 新闻
+      document.getElementById('newsList').innerHTML = (news || []).map(n => {
+        const tagClass = n.tag === '政策' ? 'tag-policy' : n.tag === '数据' ? 'tag-data' : 'tag-market';
+        return `
+          <div class="news-item">
+            <div style="display:flex;align-items:center;margin-bottom:4px;">
+              <span class="news-tag ${tagClass}">${n.tag}</span>
+              <span style="font-size:12px;color:#64748b;">${n.date}</span>
+            </div>
+            <div style="font-size:14px;">${n.title}</div>
+          </div>
+        `;
+      }).join('');
+
+      // 更新行业趋势图
+      updateIndustryChart();
+    }
+
+    function updateIndustryChart() {
+      // 模拟历史业务量数据
+      const months = ['2025-06','2025-07','2025-08','2025-09','2025-10','2025-11','2025-12','2026-01','2026-02','2026-03','2026-04'];
+      const volumes = [118.5, 125.3, 132.8, 141.2, 148.6, 155.3, 142.8, 130.5, 105.2, 138.6, 142.8];
+
+      charts.industry.data.labels = months;
+      charts.industry.data.datasets[0].data = volumes;
+      charts.industry.update();
+    }
+
+    // ============ 初始化图表 ============
+    function initCharts() {
+      // 预算对比
+      charts.budget = new Chart(document.getElementById('budgetChart'), {
+        type: 'bar',
+        data: { labels: [], datasets: [
+          { label: '预算金额', data: [], backgroundColor: '#60a5fa', borderRadius: 4 },
+          { label: '已下单金额', data: [], backgroundColor: '#a78bfa', borderRadius: 4 }
+        ]},
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom' } },
+          scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' } }, x: { grid: { display: false } } }
+        }
+      });
+
+      // 降本进度
+      charts.savings = new Chart(document.getElementById('savingsChart'), {
+        type: 'bar',
+        data: { labels: [], datasets: [
+          { label: '降本目标', data: [], backgroundColor: 'rgba(96,165,250,0.3)', borderColor: '#60a5fa', borderWidth: 2, borderRadius: 4 },
+          { label: '已降本金额', data: [], backgroundColor: '#4ade80', borderRadius: 4 }
+        ]},
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom' } },
+          scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' } }, x: { grid: { display: false } } }
+        }
+      });
+
+      // 月均单量趋势
+      charts.monthly = new Chart(document.getElementById('monthlyChart'), {
+        type: 'line',
+        data: { labels: [], datasets: [] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 10 } } },
+          scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' } }, x: { grid: { display: false } } },
+          interaction: { mode: 'index', intersect: false }
+        }
+      });
+
+      // 行业业务量趋势
+      charts.industry = new Chart(document.getElementById('industryVolumeChart'), {
+        type: 'line',
+        data: { labels: [], datasets: [
+          { label: '快递业务量（亿件）', data: [], borderColor: '#60a5fa', backgroundColor: 'rgba(96,165,250,0.1)', tension: 0.3, fill: true, pointRadius: 4, borderWidth: 2 }
+        ]},
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom' } },
+          scales: { y: { beginAtZero: false, grid: { color: 'rgba(255,255,255,0.04)' } }, x: { grid: { display: false } } }
+        }
+      });
+    }
+
+    // ============ 演示数据生成器（纯前端降级） ============
+    function generateDemoBusinessData() {
+      const carriers = [
+        { name: '顺丰速运', code: 'sf' },
+        { name: '中通快递', code: 'zt' },
+        { name: '韵达快递', code: 'yd' },
+        { name: '圆通速递', code: 'yt' },
+        { name: '申通快递', code: 'st' },
+        { name: '极兔速递', code: 'jt' },
+        { name: '邮政电商标快', code: 'yz' }
+      ];
+
+      const monthlyDailyAvg = {};
+      const today = new Date();
+      const currentMonth = today.getMonth() + 1;
+      for (let m = 1; m <= 12; m++) {
+        const isFuture = m > currentMonth;
+        if (isFuture) {
+          monthlyDailyAvg[m] = null;
+        } else if (m === currentMonth) {
+          monthlyDailyAvg[m] = 150000 + Math.floor(Math.random() * 50000);
+        } else {
+          monthlyDailyAvg[m] = 120000 + Math.floor(Math.random() * 80000);
+        }
+      }
+
+      return {
+        carriers: carriers.map(c => ({
+          ...c,
+          budget: Math.round((500 + Math.random() * 1500) * 100) / 100,
+          ordered: Math.round((300 + Math.random() * 1200) * 100) / 100,
+          savingsTarget: Math.round((50 + Math.random() * 200) * 100) / 100,
+          savingsActual: Math.round((30 + Math.random() * 150) * 100) / 100,
+          bidVolume: Math.round((10 + Math.random() * 90) * 100) / 100,
+          monthlyDailyAvg
+        })),
+        projects: ['商家寄件', '送货上门', '快递拦截'].map(p => ({
+          name: p,
+          budget: Math.round((800 + Math.random() * 2000) * 100) / 100,
+          ordered: Math.round((500 + Math.random() * 1500) * 100) / 100,
+          savingsTarget: Math.round((100 + Math.random() * 400) * 100) / 100,
+          savingsActual: Math.round((60 + Math.random() * 300) * 100) / 100,
+          bidVolume: Math.round((50 + Math.random() * 200) * 100) / 100
+        }))
+      };
+    }
+
+    function generateDemoMarketData() {
+      return {
+        stocks: [
+          { name: '顺丰控股', code: 'sz002352', price: 39.85, change: 1.23, volume: 12500 },
+          { name: '中通快递', code: 'usZTO', price: 24.56, change: -0.45, volume: 8600 },
+          { name: '韵达股份', code: 'sz002120', price: 7.82, change: 0.12, volume: 42000 },
+          { name: '圆通速递', code: 'sh600233', price: 15.36, change: 0.34, volume: 18900 },
+          { name: '申通快递', code: 'sz002468', price: 11.24, change: -0.18, volume: 23400 }
+        ],
+        industry: {
+          latestMonth: '2026年4月',
+          latestMonthVolume: 142.8,
+          yoyGrowth: 18.5,
+          momGrowth: 3.2,
+          avgPriceIndex: 98.6,
+          priceChange: -2.3,
+          cr6: 85.2
+        },
+        oil: {
+          dieselPrice: 7.42,
+          gasoline92: 8.15,
+          gasoline95: 8.68,
+          change: 0.05,
+          nextAdjustDate: '2026-05-15'
+        },
+        news: [
+          { title: '国家邮政局发布2026年Q1快递市场监管报告', date: '2026-04-28', tag: '政策' },
+          { title: '五一假期全国快递业务量同比增长22%', date: '2026-05-06', tag: '数据' },
+          { title: '主要快递企业上调末端派送费', date: '2026-05-03', tag: '市场' }
+        ]
+      };
+    }
+  </script>
+</body>
+</html>
