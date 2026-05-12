@@ -1,0 +1,17 @@
+{
+  "lastUpdated": "2026-05-12T14:00:00+08:00",
+  "carriers": [
+    { "name": "顺丰速运", "code": "sf", "budget": 1250.36, "ordered": 875.24, "savingsTarget": 180.50, "savingsActual": 125.80, "bidVolume": 65.30, "monthlyDailyAvg": {"1": 145000, "2": 132000, "3": 168000, "4": 175000, "5": 162000} },
+    { "name": "中通快递", "code": "zt", "budget": 1850.50, "ordered": 1420.80, "savingsTarget": 250.00, "savingsActual": 195.40, "bidVolume": 82.50, "monthlyDailyAvg": {"1": 198000, "2": 175000, "3": 220000, "4": 235000, "5": 210000} },
+    { "name": "韵达快递", "code": "yd", "budget": 980.20, "ordered": 650.40, "savingsTarget": 120.30, "savingsActual": 78.50, "bidVolume": 42.80, "monthlyDailyAvg": {"1": 115000, "2": 105000, "3": 135000, "4": 142000, "5": 128000} },
+    { "name": "圆通速递", "code": "yt", "budget": 1560.80, "ordered": 1180.60, "savingsTarget": 200.50, "savingsActual": 152.30, "bidVolume": 72.40, "monthlyDailyAvg": {"1": 168000, "2": 155000, "3": 190000, "4": 205000, "5": 182000} },
+    { "name": "申通快递", "code": "st", "budget": 720.50, "ordered": 480.30, "savingsTarget": 95.20, "savingsActual": 58.60, "bidVolume": 35.20, "monthlyDailyAvg": {"1": 85000, "2": 78000, "3": 102000, "4": 110000, "5": 95000} },
+    { "name": "极兔速递", "code": "jt", "budget": 890.60, "ordered": 620.40, "savingsTarget": 110.80, "savingsActual": 72.50, "bidVolume": 48.60, "monthlyDailyAvg": {"1": 98000, "2": 88000, "3": 118000, "4": 128000, "5": 108000} },
+    { "name": "邮政电商标快", "code": "yz", "budget": 1120.40, "ordered": 820.50, "savingsTarget": 145.60, "savingsActual": 102.40, "bidVolume": 58.90, "monthlyDailyAvg": {"1": 125000, "2": 115000, "3": 152000, "4": 165000, "5": 145000} }
+  ],
+  "projects": [
+    { "name": "商家寄件", "budget": 4850.60, "ordered": 3280.40, "savingsTarget": 680.50, "savingsActual": 468.20, "bidVolume": 220.50 },
+    { "name": "送货上门", "budget": 3620.80, "ordered": 2450.60, "savingsTarget": 520.30, "savingsActual": 385.50, "bidVolume": 165.80 },
+    { "name": "快递拦截", "budget": 2150.40, "ordered": 1320.50, "savingsTarget": 350.60, "savingsActual": 242.80, "bidVolume": 95.20 }
+  ]
+}
