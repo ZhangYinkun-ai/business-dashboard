@@ -14,6 +14,30 @@
          },
          "name" : "中通快递",
          "ordered" : 1420.8,
+         "projectData" : {
+            "åå®¶å¯ä»¶" : {
+               "fy26DailyAvg" : 18135,
+               "monthlyDailyAvg" : {
+                  "1" : 24413,
+                  "2" : 21596,
+                  "3" : 34293,
+                  "4" : 49243,
+                  "5" : 45346
+               },
+               "tMinus1Volume" : 53986
+            },
+            "éè´§ä¸é¨" : {
+               "fy26DailyAvg" : 154214,
+               "monthlyDailyAvg" : {
+                  "1" : 136640,
+                  "2" : 92470,
+                  "3" : 115622,
+                  "4" : 109651,
+                  "5" : 98420
+               },
+               "tMinus1Volume" : 113614
+            }
+         },
          "savingsActual" : 195.4,
          "savingsTarget" : 250,
          "tMinus1Volume" : 53986
@@ -32,6 +56,30 @@
          },
          "name" : "圆通速递",
          "ordered" : 1180.6,
+         "projectData" : {
+            "åå®¶å¯ä»¶" : {
+               "fy26DailyAvg" : 17912,
+               "monthlyDailyAvg" : {
+                  "1" : 27337,
+                  "2" : 20548,
+                  "3" : 32373,
+                  "4" : 49440,
+                  "5" : 54055
+               },
+               "tMinus1Volume" : 60167
+            },
+            "éè´§ä¸é¨" : {
+               "fy26DailyAvg" : 108534,
+               "monthlyDailyAvg" : {
+                  "1" : 101876,
+                  "2" : 70700,
+                  "3" : 88073,
+                  "4" : 84682,
+                  "5" : 79292
+               },
+               "tMinus1Volume" : 88737
+            }
+         },
          "savingsActual" : 152.3,
          "savingsTarget" : 200.5,
          "tMinus1Volume" : 60167
@@ -50,6 +98,30 @@
          },
          "name" : "申通快递",
          "ordered" : 480.3,
+         "projectData" : {
+            "åå®¶å¯ä»¶" : {
+               "fy26DailyAvg" : 18223,
+               "monthlyDailyAvg" : {
+                  "1" : 24739,
+                  "2" : 19537,
+                  "3" : 30321,
+                  "4" : 47914,
+                  "5" : 46941
+               },
+               "tMinus1Volume" : 55167
+            },
+            "éè´§ä¸é¨" : {
+               "fy26DailyAvg" : 106847,
+               "monthlyDailyAvg" : {
+                  "1" : 87765,
+                  "2" : 62551,
+                  "3" : 75911,
+                  "4" : 63714,
+                  "5" : 59630
+               },
+               "tMinus1Volume" : 69860
+            }
+         },
          "savingsActual" : 58.6,
          "savingsTarget" : 95.2,
          "tMinus1Volume" : 55167
@@ -68,6 +140,30 @@
          },
          "name" : "韵达快递",
          "ordered" : 650.4,
+         "projectData" : {
+            "åå®¶å¯ä»¶" : {
+               "fy26DailyAvg" : 22019,
+               "monthlyDailyAvg" : {
+                  "1" : 33545,
+                  "2" : 25884,
+                  "3" : 38709,
+                  "4" : 35905,
+                  "5" : 38505
+               },
+               "tMinus1Volume" : 44910
+            },
+            "éè´§ä¸é¨" : {
+               "fy26DailyAvg" : 53402,
+               "monthlyDailyAvg" : {
+                  "1" : 40970,
+                  "2" : 30320,
+                  "3" : 36218,
+                  "4" : 31718,
+                  "5" : 27631
+               },
+               "tMinus1Volume" : 29063
+            }
+         },
          "savingsActual" : 78.5,
          "savingsTarget" : 120.3,
          "tMinus1Volume" : 44910
@@ -86,6 +182,30 @@
          },
          "name" : "极兔速递",
          "ordered" : 620.4,
+         "projectData" : {
+            "åå®¶å¯ä»¶" : {
+               "fy26DailyAvg" : 13682,
+               "monthlyDailyAvg" : {
+                  "1" : 27863,
+                  "2" : 26000,
+                  "3" : 42698,
+                  "4" : 51008,
+                  "5" : 48877
+               },
+               "tMinus1Volume" : 57360
+            },
+            "éè´§ä¸é¨" : {
+               "fy26DailyAvg" : 9948,
+               "monthlyDailyAvg" : {
+                  "1" : 9113,
+                  "2" : 6082,
+                  "3" : 8000,
+                  "4" : 7697,
+                  "5" : 9456
+               },
+               "tMinus1Volume" : 10290
+            }
+         },
          "savingsActual" : 72.5,
          "savingsTarget" : 110.8,
          "tMinus1Volume" : 57360
@@ -104,6 +224,30 @@
          },
          "name" : "顺丰速运",
          "ordered" : 875.24,
+         "projectData" : {
+            "åå®¶å¯ä»¶" : {
+               "fy26DailyAvg" : 4479,
+               "monthlyDailyAvg" : {
+                  "1" : 7321,
+                  "2" : 10438,
+                  "3" : 13476,
+                  "4" : 18841,
+                  "5" : 15694
+               },
+               "tMinus1Volume" : 18577
+            },
+            "éè´§ä¸é¨" : {
+               "fy26DailyAvg" : 326374,
+               "monthlyDailyAvg" : {
+                  "1" : 252113,
+                  "2" : 214088,
+                  "3" : 258460,
+                  "4" : 244550,
+                  "5" : 232698
+               },
+               "tMinus1Volume" : 266655
+            }
+         },
          "savingsActual" : 125.8,
          "savingsTarget" : 180.5,
          "tMinus1Volume" : 18577
@@ -122,6 +266,19 @@
          },
          "name" : "邮政电商标快",
          "ordered" : 820.5,
+         "projectData" : {
+            "åå®¶å¯ä»¶" : {
+               "fy26DailyAvg" : 11,
+               "monthlyDailyAvg" : {
+                  "1" : 4,
+                  "2" : 17,
+                  "3" : 7,
+                  "4" : 15,
+                  "5" : 16
+               },
+               "tMinus1Volume" : 21
+            }
+         },
          "savingsActual" : 102.4,
          "savingsTarget" : 145.6,
          "tMinus1Volume" : 21
@@ -140,6 +297,30 @@
          },
          "name" : "菜鸟速递",
          "ordered" : 580.4,
+         "projectData" : {
+            "åå®¶å¯ä»¶" : {
+               "fy26DailyAvg" : 42,
+               "monthlyDailyAvg" : {
+                  "1" : 47,
+                  "2" : 58,
+                  "3" : 55,
+                  "4" : 85,
+                  "5" : 59
+               },
+               "tMinus1Volume" : 0
+            },
+            "éè´§ä¸é¨" : {
+               "fy26DailyAvg" : 8984,
+               "monthlyDailyAvg" : {
+                  "1" : 9010,
+                  "2" : 8060,
+                  "3" : 9098,
+                  "4" : 11947,
+                  "5" : 13944
+               },
+               "tMinus1Volume" : 15607
+            }
+         },
          "savingsActual" : 85.3,
          "savingsTarget" : 120.6,
          "tMinus1Volume" : 0
@@ -158,12 +339,25 @@
          },
          "name" : "京东快递",
          "ordered" : 450.2,
+         "projectData" : {
+            "åå®¶å¯ä»¶" : {
+               "fy26DailyAvg" : 72000,
+               "monthlyDailyAvg" : {
+                  "1" : 78000,
+                  "2" : 68000,
+                  "3" : 92000,
+                  "4" : 98000,
+                  "5" : 85000
+               },
+               "tMinus1Volume" : 95000
+            }
+         },
          "savingsActual" : 58.6,
          "savingsTarget" : 85.4,
          "tMinus1Volume" : 95000
       }
    ],
-   "lastUpdated" : "2026-05-12T09:54:28+00:00",
+   "lastUpdated" : "2026-05-12T10:27:58+00:00",
    "projectCarriers" : {
       "商家寄件" : [
          "中通快递",
@@ -208,10 +402,12 @@
       {
          "bidVolume" : 165.8,
          "budget" : 3620.8,
+         "fy26DailyAvg" : 432945,
          "name" : "送货上门",
          "ordered" : 2450.6,
          "savingsActual" : 385.5,
-         "savingsTarget" : 520.3
+         "savingsTarget" : 520.3,
+         "tMinus1Volume" : 311564
       },
       {
          "bidVolume" : 95.2,

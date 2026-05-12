@@ -417,6 +417,15 @@
       // 按定义的顺序排序
       carriers.sort((a, b) => projectCarrierNames.indexOf(a.name) - projectCarrierNames.indexOf(b.name));
 
+      // 项目数据读取辅助函数
+      const currentProjName = projectNames[currentProject];
+      const getProjData = (c) => {
+        if (c.projectData && c.projectData[currentProjName]) {
+          return c.projectData[currentProjName];
+        }
+        return c;
+      };
+
       // 更新汇总指标
       let totalBudget = 0, totalOrdered = 0, totalSavings = 0, totalBid = 0;
       businessData.projects.forEach(p => {
@@ -438,16 +447,17 @@
       // 渲染表格
       const tbody = document.getElementById('businessTable');
       tbody.innerHTML = carriers.map((c, i) => {
+        const pc = getProjData(c);
         const progress = c.budget > 0 ? Math.min(100, (c.ordered / c.budget * 100)).toFixed(1) : 0;
         const savingsProgress = c.savingsTarget > 0 ? Math.min(100, (c.savingsActual / c.savingsTarget * 100)).toFixed(1) : 0;
         // FY26日均列
-        const fy26Cell = c.fy26DailyAvg ? `<td style="text-align:right;font-weight:600;color:#60a5fa;">${c.fy26DailyAvg.toLocaleString()}</td>` : '<td style="text-align:right;color:#475569;">-</td>';
+        const fy26Cell = pc.fy26DailyAvg ? `<td style="text-align:right;font-weight:600;color:#60a5fa;">${pc.fy26DailyAvg.toLocaleString()}</td>` : '<td style="text-align:right;color:#475569;">-</td>';
         // T-1单量列
-        const t1Cell = c.tMinus1Volume ? `<td style="text-align:right;font-weight:600;color:#a78bfa;">${c.tMinus1Volume.toLocaleString()}</td>` : '<td style="text-align:right;color:#475569;">-</td>';
+        const t1Cell = pc.tMinus1Volume ? `<td style="text-align:right;font-weight:600;color:#a78bfa;">${pc.tMinus1Volume.toLocaleString()}</td>` : '<td style="text-align:right;color:#475569;">-</td>';
         // 月度单量列
         const monthlyCells = [];
         for (let m = 1; m <= 12; m++) {
-          const val = c.monthlyDailyAvg?.[m];
+          const val = pc.monthlyDailyAvg?.[m];
           if (val !== null && val !== undefined) {
             monthlyCells.push(`<td style="text-align:right;">${val.toLocaleString()}</td>`);
           } else {
