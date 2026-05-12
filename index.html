@@ -137,6 +137,7 @@
                 <th>已降本金额</th>
                 <th>中标单量</th>
                 <th>下单进度</th>
+                <th>FY26日均</th>
                 <th>1月</th>
                 <th>2月</th>
                 <th>3月</th>
@@ -391,7 +392,29 @@
     function renderBusinessData() {
       if (!businessData) return;
       const proj = businessData.projects[currentProject];
-      const carriers = businessData.carriers || [];
+      const allCarriers = businessData.carriers || [];
+
+      // 根据项目获取对应的服务商列表
+      let projectCarrierNames = [];
+      if (businessData.projectCarriers) {
+        const projName = projectNames[currentProject];
+        if (currentProject === 1) {
+          // 送货上门：先显示有费用的，再显示无费用的
+          projectCarrierNames = [
+            ...businessData.projectCarriers['送货上门'],
+            ...businessData.projectCarriers['送货上门-无费']
+          ];
+        } else {
+          projectCarrierNames = businessData.projectCarriers[projName] || [];
+        }
+      } else {
+        projectCarrierNames = allCarriers.map(c => c.name);
+      }
+
+      // 筛选当前项目对应服务商的数据
+      const carriers = allCarriers.filter(c => projectCarrierNames.includes(c.name));
+      // 按定义的顺序排序
+      carriers.sort((a, b) => projectCarrierNames.indexOf(a.name) - projectCarrierNames.indexOf(b.name));
 
       // 更新汇总指标
       let totalBudget = 0, totalOrdered = 0, totalSavings = 0, totalBid = 0;
@@ -407,13 +430,18 @@
       document.getElementById('totalBidVolume').textContent = totalBid.toFixed(2);
 
       // 更新表格标题
-      document.getElementById('tableTitle').textContent = `${projectNames[currentProject]} - 服务商数据`;
+      let tableTitle = `${projectNames[currentProject]} - 服务商数据`;
+      if (currentProject === 1) tableTitle = '送货上门 - 服务商数据（含无费用项）';
+      document.getElementById('tableTitle').textContent = tableTitle;
 
       // 渲染表格
       const tbody = document.getElementById('businessTable');
       tbody.innerHTML = carriers.map((c, i) => {
         const progress = c.budget > 0 ? Math.min(100, (c.ordered / c.budget * 100)).toFixed(1) : 0;
         const savingsProgress = c.savingsTarget > 0 ? Math.min(100, (c.savingsActual / c.savingsTarget * 100)).toFixed(1) : 0;
+        // FY26日均列
+        const fy26Cell = c.fy26DailyAvg ? `<td style="text-align:right;font-weight:600;color:#60a5fa;">${c.fy26DailyAvg.toLocaleString()}</td>` : '<td style="text-align:right;color:#475569;">-</td>';
+        // 月度单量列
         const monthlyCells = [];
         for (let m = 1; m <= 12; m++) {
           const val = c.monthlyDailyAvg?.[m];
@@ -423,22 +451,26 @@
             monthlyCells.push(`<td style="text-align:right;color:#475569;">-</td>`);
           }
         }
+        // 是否为无费用项
+        const isNoCost = currentProject === 1 && businessData.projectCarriers['送货上门-无费']?.includes(c.name);
+        const rowStyle = isNoCost ? 'style="background:rgba(255,255,255,0.02);"' : '';
+        const nameLabel = isNoCost ? `${c.name} <span style="font-size:10px;color:#fbbf24;background:rgba(251,191,36,0.15);padding:1px 4px;border-radius:3px;">无费用</span>` : c.name;
+
         return `
-          <tr>
-            <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${carrierColors[i % carrierColors.length]};margin-right:8px;"></span>${c.name}</td>
-            <td style="text-align:right;">${(c.budget || 0).toFixed(2)}</td>
-            <td style="text-align:right;">${(c.ordered || 0).toFixed(2)}</td>
-            <td style="text-align:right;">${(c.savingsTarget || 0).toFixed(2)}</td>
-            <td style="text-align:right;">${(c.savingsActual || 0).toFixed(2)} <span style="font-size:11px;color:${savingsProgress >= 80 ? '#4ade80' : '#fbbf24'}">(${savingsProgress}%)</span></td>
-            <td style="text-align:right;">${(c.bidVolume || 0).toFixed(2)}</td>
-            <td>
-              <div style="display:flex;align-items:center;gap:8px;">
+          <tr ${rowStyle}>
+            <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${carrierColors[i % carrierColors.length]};margin-right:8px;"></span>${nameLabel}</td>
+            <td style="text-align:right;">${isNoCost ? '-' : (c.budget || 0).toFixed(2)}</td>
+            <td style="text-align:right;">${isNoCost ? '-' : (c.ordered || 0).toFixed(2)}</td>
+            <td style="text-align:right;">${isNoCost ? '-' : (c.savingsTarget || 0).toFixed(2)}</td>
+            <td style="text-align:right;">${isNoCost ? '-' : (c.savingsActual || 0).toFixed(2)} ${isNoCost ? '' : `<span style="font-size:11px;color:${savingsProgress >= 80 ? '#4ade80' : '#fbbf24'}">(${savingsProgress}%)</span>`}</td>
+            <td style="text-align:right;">${isNoCost ? '-' : (c.bidVolume || 0).toFixed(2)}</td>
+            <td>${isNoCost ? '<span style="color:#475569;">-</span>' : `<div style="display:flex;align-items:center;gap:8px;">
                 <div class="progress-bar" style="flex:1;min-width:60px;">
                   <div class="progress-fill" style="width:${progress}%;background:${progress >= 80 ? '#4ade80' : progress >= 50 ? '#60a5fa' : '#fbbf24'}"></div>
                 </div>
                 <span style="font-size:11px;color:#64748b;min-width:36px;">${progress}%</span>
-              </div>
-            </td>
+              </div>`}</td>
+            ${fy26Cell}
             ${monthlyCells.join('')}
           </tr>
         `;
@@ -581,39 +613,45 @@
     // ============ 数据生成器 ============
     function generateDemoBusinessData() {
       const carriers = [
-        { name: '顺丰速运', code: 'sf' },
         { name: '中通快递', code: 'zt' },
-        { name: '韵达快递', code: 'yd' },
         { name: '圆通速递', code: 'yt' },
         { name: '申通快递', code: 'st' },
+        { name: '韵达快递', code: 'yd' },
         { name: '极兔速递', code: 'jt' },
-        { name: '邮政电商标快', code: 'yz' }
+        { name: '顺丰速运', code: 'sf' },
+        { name: '邮政电商标快', code: 'yz' },
+        { name: '菜鸟速递', code: 'cn' },
+        { name: '京东快递', code: 'jd' }
       ];
 
-      const monthlyDailyAvg = {};
       const today = new Date();
       const currentMonth = today.getMonth() + 1;
-      for (let m = 1; m <= 12; m++) {
-        const isFuture = m > currentMonth;
-        if (isFuture) {
-          monthlyDailyAvg[m] = null;
-        } else if (m === currentMonth) {
-          monthlyDailyAvg[m] = 150000 + Math.floor(Math.random() * 50000);
-        } else {
-          monthlyDailyAvg[m] = 120000 + Math.floor(Math.random() * 80000);
-        }
-      }
 
       return {
-        carriers: carriers.map(c => ({
-          ...c,
-          budget: Math.round((500 + Math.random() * 1500) * 100) / 100,
-          ordered: Math.round((300 + Math.random() * 1200) * 100) / 100,
-          savingsTarget: Math.round((50 + Math.random() * 200) * 100) / 100,
-          savingsActual: Math.round((30 + Math.random() * 150) * 100) / 100,
-          bidVolume: Math.round((10 + Math.random() * 90) * 100) / 100,
-          monthlyDailyAvg
-        })),
+        carriers: carriers.map(c => {
+          const monthlyDailyAvg = {};
+          const fy26DailyAvg = 80000 + Math.floor(Math.random() * 100000);
+          for (let m = 1; m <= 12; m++) {
+            const isFuture = m > currentMonth;
+            if (isFuture) {
+              monthlyDailyAvg[m] = null;
+            } else if (m === currentMonth) {
+              monthlyDailyAvg[m] = fy26DailyAvg + Math.floor(Math.random() * 40000 - 20000);
+            } else {
+              monthlyDailyAvg[m] = fy26DailyAvg + Math.floor(Math.random() * 60000 - 30000);
+            }
+          }
+          return {
+            ...c,
+            budget: Math.round((500 + Math.random() * 1500) * 100) / 100,
+            ordered: Math.round((300 + Math.random() * 1200) * 100) / 100,
+            savingsTarget: Math.round((50 + Math.random() * 200) * 100) / 100,
+            savingsActual: Math.round((30 + Math.random() * 150) * 100) / 100,
+            bidVolume: Math.round((10 + Math.random() * 90) * 100) / 100,
+            fy26DailyAvg,
+            monthlyDailyAvg
+          };
+        }),
         projects: ['商家寄件', '送货上门', '快递拦截'].map(p => ({
           name: p,
           budget: Math.round((800 + Math.random() * 2000) * 100) / 100,
@@ -621,7 +659,13 @@
           savingsTarget: Math.round((100 + Math.random() * 400) * 100) / 100,
           savingsActual: Math.round((60 + Math.random() * 300) * 100) / 100,
           bidVolume: Math.round((50 + Math.random() * 200) * 100) / 100
-        }))
+        })),
+        projectCarriers: {
+          '商家寄件': ['中通快递', '圆通速递', '申通快递', '韵达快递', '极兔速递', '顺丰速运', '邮政电商标快', '菜鸟速递'],
+          '送货上门': ['中通快递', '圆通速递', '申通快递', '韵达快递', '极兔速递'],
+          '送货上门-无费': ['顺丰速运', '菜鸟速递'],
+          '快递拦截': ['中通快递', '圆通速递', '申通快递', '韵达快递', '极兔速递', '邮政电商标快', '京东快递']
+        }
       };
     }
 
