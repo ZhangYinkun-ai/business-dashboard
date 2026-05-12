@@ -26,6 +26,17 @@
                },
                "tMinus1Volume" : 53986
             },
+            "快递拦截" : {
+               "fy26DailyAvg" : 182103,
+               "monthlyDailyAvg" : {
+                  "1" : 178258,
+                  "2" : 157506,
+                  "3" : 156723,
+                  "4" : 156493,
+                  "5" : 138441
+               },
+               "tMinus1Volume" : 118449
+            },
             "送货上门" : {
                "fy26DailyAvg" : 154214,
                "monthlyDailyAvg" : {
@@ -67,6 +78,17 @@
                   "5" : 54055
                },
                "tMinus1Volume" : 60167
+            },
+            "快递拦截" : {
+               "fy26DailyAvg" : 124895,
+               "monthlyDailyAvg" : {
+                  "1" : 122934,
+                  "2" : 110499,
+                  "3" : 110638,
+                  "4" : 108429,
+                  "5" : 97624
+               },
+               "tMinus1Volume" : 85535
             },
             "送货上门" : {
                "fy26DailyAvg" : 108534,
@@ -110,6 +132,17 @@
                },
                "tMinus1Volume" : 55167
             },
+            "快递拦截" : {
+               "fy26DailyAvg" : 90101,
+               "monthlyDailyAvg" : {
+                  "1" : 89135,
+                  "2" : 76892,
+                  "3" : 81731,
+                  "4" : 78205,
+                  "5" : 71167
+               },
+               "tMinus1Volume" : 62941
+            },
             "送货上门" : {
                "fy26DailyAvg" : 106847,
                "monthlyDailyAvg" : {
@@ -152,6 +185,17 @@
                },
                "tMinus1Volume" : 44910
             },
+            "快递拦截" : {
+               "fy26DailyAvg" : 77719,
+               "monthlyDailyAvg" : {
+                  "1" : 75946,
+                  "2" : 67286,
+                  "3" : 68192,
+                  "4" : 66807,
+                  "5" : 60120
+               },
+               "tMinus1Volume" : 53602
+            },
             "送货上门" : {
                "fy26DailyAvg" : 53402,
                "monthlyDailyAvg" : {
@@ -193,6 +237,17 @@
                   "5" : 48877
                },
                "tMinus1Volume" : 57360
+            },
+            "快递拦截" : {
+               "fy26DailyAvg" : 54634,
+               "monthlyDailyAvg" : {
+                  "1" : 53128,
+                  "2" : 47793,
+                  "3" : 50967,
+                  "4" : 47788,
+                  "5" : 43726
+               },
+               "tMinus1Volume" : 40840
             },
             "送货上门" : {
                "fy26DailyAvg" : 9948,
@@ -277,6 +332,17 @@
                   "5" : 16
                },
                "tMinus1Volume" : 21
+            },
+            "快递拦截" : {
+               "fy26DailyAvg" : 39785,
+               "monthlyDailyAvg" : {
+                  "1" : 37135,
+                  "2" : 37533,
+                  "3" : 39009,
+                  "4" : 32174,
+                  "5" : 28351
+               },
+               "tMinus1Volume" : 25758
             }
          },
          "savingsActual" : 102.4,
@@ -350,6 +416,17 @@
                   "5" : 85000
                },
                "tMinus1Volume" : 95000
+            },
+            "快递拦截" : {
+               "fy26DailyAvg" : 3834,
+               "monthlyDailyAvg" : {
+                  "1" : 3889,
+                  "2" : 4612,
+                  "3" : 3881,
+                  "4" : 3618,
+                  "5" : 3468
+               },
+               "tMinus1Volume" : 0
             }
          },
          "savingsActual" : 58.6,
@@ -357,7 +434,7 @@
          "tMinus1Volume" : 95000
       }
    ],
-   "lastUpdated" : "2026-05-12T10:27:58+00:00",
+   "lastUpdated" : "2026-05-12T11:47:18+00:00",
    "projectCarriers" : {
       "商家寄件" : [
          "中通快递",

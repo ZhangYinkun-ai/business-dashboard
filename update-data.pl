@@ -156,10 +156,10 @@ if (!-f $data_json) {
 
 # Read JSON
 open(my $jfh, '<:raw', $data_json) or die "Cannot read $data_json: $!";
-my $json_text = decode('utf8', do { local $/; <$jfh> });
+my $json_text = do { local $/; <$jfh> };
 close($jfh);
 
-my $json = JSON::PP->new->canonical;
+my $json = JSON::PP->new->canonical->utf8;
 my $data = $json->decode($json_text);
 
 # Update timestamp
@@ -194,7 +194,7 @@ copy($data_json, "$data_json.bak");
 # Save
 my $output = $json->pretty->encode($data);
 open(my $ofh, '>:raw', $data_json) or die "Cannot write $data_json: $!";
-print $ofh encode('utf8', $output);
+print $ofh $output;
 close($ofh);
 
 print "  data.json updated\n";

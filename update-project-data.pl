@@ -5,6 +5,7 @@
 
 use strict;
 use warnings;
+use utf8;
 use JSON::PP;
 use Time::Piece;
 use File::Copy;
@@ -20,16 +21,16 @@ my $csv_path = "$script_dir/scripts/shsm-data-utf8.csv";
 # 承运商名称映射（送货上门口径）
 # ============================================================
 my %carrier_map = (
-    decode('utf8', '中通')     => decode('utf8', '中通快递'),
-    decode('utf8', '圆通')     => decode('utf8', '圆通速递'),
-    decode('utf8', '申通')     => decode('utf8', '申通快递'),
-    decode('utf8', '韵达')     => decode('utf8', '韵达快递'),
-    decode('utf8', '极兔速递') => decode('utf8', '极兔速递'),
-    decode('utf8', '顺丰')     => decode('utf8', '顺丰速运'),
-    decode('utf8', '丹鸟')     => decode('utf8', '菜鸟速递'),
+    '中通'     => '中通快递',
+    '圆通'     => '圆通速递',
+    '申通'     => '申通快递',
+    '韵达'     => '韵达快递',
+    '极兔速递' => '极兔速递',
+    '顺丰'     => '顺丰速运',
+    '丹鸟'     => '菜鸟速递',
 );
 
-my %is_shsm = map { (decode('utf8', $_) => 1) }
+my %is_shsm = map { ($_ => 1) }
     qw(中通快递 圆通速递 申通快递 韵达快递 极兔速递 顺丰速运 菜鸟速递);
 
 # ============================================================
@@ -96,11 +97,11 @@ print "  Parsed $count carriers for 送货上门\n";
 # 读取并更新 data.json
 # ============================================================
 open(my $jfh, '<:raw', $data_json) or die "Cannot read $data_json: $!";
-my $json_text = decode('utf8', do { local $/; <$jfh> });
+my $json_bytes = do { local $/; <$jfh> };
 close($jfh);
 
-my $json = JSON::PP->new->canonical;
-my $data = $json->decode($json_text);
+my $json = JSON::PP->new->canonical->utf8;
+my $data = $json->decode($json_bytes);
 
 # Update timestamp
 my $t = gmtime();
@@ -130,15 +131,15 @@ for my $carrier (@{$data->{carriers}}) {
 
 # Update project-level data for 送货上门
 for my $proj (@{$data->{projects}}) {
-    if ($proj->{name} eq decode('utf8', '送货上门')) {
+    if ($proj->{name} eq '送货上门') {
         # Calculate totals from carrier data
         my $total_fy26 = 0;
         my $total_t1 = 0;
         for my $carrier (@{$data->{carriers}}) {
             my $name = $carrier->{name};
             next unless $is_shsm{$name};
-            next if $name eq decode('utf8', '顺丰速运');
-            next if $name eq decode('utf8', '菜鸟速递');
+            next if $name eq '顺丰速运';
+            next if $name eq '菜鸟速递';
             if (exists $carrier->{projectData}{'送货上门'}) {
                 $total_fy26 += $carrier->{projectData}{'送货上门'}{fy26DailyAvg} // 0;
                 $total_t1 += $carrier->{projectData}{'送货上门'}{tMinus1Volume} // 0;
@@ -158,5 +159,5 @@ copy($data_json, "$data_json.bak2");
 # Save
 my $output = $json->pretty->encode($data);
 open(my $ofh, '>:raw', $data_json) or die "Cannot write $data_json: $!";
-print $ofh encode('utf8', $output);
+print $ofh $output;
 close($ofh);
